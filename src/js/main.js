@@ -11,10 +11,10 @@ const DIRECTION = {
 }
 
 const CONFIG = {
-    length: 5,
+    length: 4,
     direction: DIRECTION.Right,
     speed: 10,
-    color: "orange"
+    snakeColor: "black",
 }
 
 class GameObject {
@@ -32,47 +32,60 @@ class GameObject {
     }
 }
 
-class Snake {
+class Snake extends GameObject {
     constructor(x, y) {
+        super(x, y);
         this.bodySegments = [];
+        this.keepTail = false;
         this.currentDirection = CONFIG.direction;
 
-        // Setup body
         for(let i = 0; i < CONFIG.length; i++) {
             const newSegment = new GameObject(x, y);
             this.bodySegments.push(newSegment);
         }
     }
 
-    get head() { return this.bodySegments[0]; }
-
-    get headX() { return this.bodySegments[0].x; }
-    set headX(x) { this.bodySegments[0].x = x; }
-
-    get headY() { return this.bodySegments[0].y; }
-    set headY(y) { this.bodySegments[0].y = y; }
+    getHead() { return this.bodySegments[0]; }
 
     get direction() { return this.currentDirection; }
     set direction(direction) { this.currentDirection = direction; }
 
     moveHead() {
+        const head = this.getHead();
+
         let newSegment;
         switch(this.currentDirection) {
             case DIRECTION.Up:
-                this.bodySegments[0].y -= GRID_SIZE;
+                newSegment = new GameObject(head.x, head.y -= GRID_SIZE);
                 break;
             case DIRECTION.Down:
-                this.bodySegments[0].y += GRID_SIZE;
+                newSegment = new GameObject(head.x, head.y += GRID_SIZE);
                 break;
             case DIRECTION.Left:
-                this.bodySegments[0].x -= GRID_SIZE;
+                newSegment = new GameObject(head.x -= GRID_SIZE, head.y);
                 break;
             case DIRECTION.Right:
-                this.bodySegments[0].x += GRID_SIZE;
+                newSegment = new GameObject(head.x += GRID_SIZE, head.y);
                 break;
             default:
                 break;
         }
+        
+        if (!this.keepTail) {
+            this.bodySegments.pop();
+        } else this.keepTail = false;
+        
+        this.bodySegments.unshift(newSegment);
+    }
+    
+    draw() {
+        context.fillStyle = CONFIG.snakeColor;
+        for (let i = 0; i < this.bodySegments.length; i++) {
+            context.fillRect(this.bodySegments[i].x, this.bodySegments[i].y, GRID_SIZE, GRID_SIZE);
+        }
+    }
+
+}
     }
 
     draw() {
@@ -99,7 +112,7 @@ let drawGrid = () => {
 
 let handleController = (event) => {
     const direction = event.keyCode;
-
+    
     if (direction >= DIRECTION.Left && direction <= DIRECTION.Down) {
         if (direction === DIRECTION.Left && snake.direction === DIRECTION.Right) {
             return;
@@ -115,7 +128,7 @@ let handleController = (event) => {
         }
         snake.direction = direction;
     }
-}
+};
 
 let gameLoop = () => {
     context.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -124,20 +137,25 @@ let gameLoop = () => {
     snake.moveHead();
     snake.draw();
     
+    // Loop game at `CONFIG.speed` FPS
     setTimeout(function () {
         gameLoop();
     }, 1000 / CONFIG.speed);
-}
+};
 
+
+/* Game Objects */
 let snake;
-let context;
+
+/* Intialize Game */
 if (typeof (canvas.getContext) !== undefined) {
-    context = canvas.getContext('2d');
-    context.scale(1,1);
+    var context = canvas.getContext('2d');
     window.addEventListener('keydown', handleController, false);
 
-    snake = new Snake(GRID_SIZE, GRID_SIZE)
+    snake = new Snake(GRID_SIZE, GRID_SIZE);
+
     gameLoop();
+
 } else {
     console.error(`
         This browser does not support HTML5 Canvas.
