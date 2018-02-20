@@ -1,0 +1,29 @@
+{
+  "name": "snake",
+  "version": "1.0.0",
+  "description": "Snake game made with HTML5 Canvas",
+  "main": "main.js",
+  "scripts": {
+    "babel": "babel --presets es2015 src/js/main.js -o build/main.bundle.js",
+    "start": "http-server",
+    "webpack": "webpack",
+    "start:dev": "webpack-dev-server --inline",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "snake",
+    "game",
+    "html5",
+    "canvas"
+  ],
+  "author": "Trent Rand <contact@trentrand.com> (https://trentrand.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
+    "webpack": "^3.11.0",
+    "webpack-dev-server": "^2.11.1"
+  }
+}
