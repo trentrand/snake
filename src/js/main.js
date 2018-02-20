@@ -72,6 +72,18 @@ class Snake extends GameObject {
                 break;
         }
         
+        if (snake.outOfBounds()) {
+            gameOver = true;
+        }
+        
+        if (snake.collidesWithSelf()) {
+            gameOver = true;
+        }
+        
+        if (fruit.collides(head.x, head.y)) {
+            snake.eat();
+        }
+        
         if (!this.keepTail) {
             this.bodySegments.pop();
         } else this.keepTail = false;
@@ -91,6 +103,22 @@ class Snake extends GameObject {
         }
     }
 
+    outOfBounds() {
+        const head = this.getHead();
+
+        return head.x < 0 || head.x >= CANVAS_WIDTH || head.y < 0 || head.y >= CANVAS_HEIGHT;
+    }
+
+    collidesWithSelf() {
+        let [head, ...tailSegments] = this.bodySegments;
+
+        for(let segment of tailSegments) {
+            if (head.collides(segment.x, segment.y)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 class Fruit extends GameObject {
@@ -158,6 +186,10 @@ let handleController = (event) => {
 };
 
 let gameLoop = () => {
+    if (gameOver) {
+        return;
+    } 
+    
     context.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
     drawGrid();
 
@@ -172,6 +204,8 @@ let gameLoop = () => {
     }, 1000 / CONFIG.speed);
 };
 
+/* Game State */
+let gameOver = false;
 
 /* Game Objects */
 let snake;
