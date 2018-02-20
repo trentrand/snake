@@ -312,16 +312,19 @@ var drawGrid = function drawGrid() {
 };
 
 var endGame = function endGame() {
+    context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    context.fillStyle = "black";
+
     context.font = "64px Comic Sans MS";
-    context.fillStyle = "red";
     context.textAlign = "center";
     context.fillText("GAME OVER", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
 
     var score = snake.bodySegments.length - CONFIG.length;
     context.font = "32px Comic Sans MS";
-    context.fillStyle = "red";
-    context.textAlign = "center";
-    context.fillText("Score: " + score, CANVAS_WIDTH / 2, 2 * CANVAS_HEIGHT / 3);
+    context.fillText("Score: " + score, CANVAS_WIDTH / 2, 1.9 * CANVAS_HEIGHT / 3);
+
+    context.font = "16px Comic Sans MS";
+    context.fillText("Press space key to play again", CANVAS_WIDTH / 2, 2.2 * CANVAS_HEIGHT / 3);
 };
 
 var handleController = function handleController(event) {
@@ -341,6 +344,10 @@ var handleController = function handleController(event) {
             return;
         }
         snake.direction = direction;
+    }
+
+    if (gameOver && event.keyCode === 32) {
+        startGame();
     }
 };
 
@@ -371,15 +378,21 @@ var gameOver = false;
 var snake = void 0;
 var fruit = void 0;
 
-/* Intialize Game */
-if (_typeof(canvas.getContext) !== undefined) {
-    var context = canvas.getContext('2d');
-    window.addEventListener('keydown', handleController, false);
+var startGame = function startGame() {
+    gameOver = false;
 
     snake = new Snake(GRID_SIZE, GRID_SIZE);
     fruit = new Fruit();
 
     gameLoop();
+};
+
+/* Intialize Game */
+if (_typeof(canvas.getContext) !== undefined) {
+    var context = canvas.getContext('2d');
+    window.addEventListener('keydown', handleController, false);
+
+    startGame();
 } else {
     console.error("\n        This browser does not support HTML5 Canvas.\n        Please try loading this page with a newer browser.\n    ");
 }
