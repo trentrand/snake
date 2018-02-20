@@ -15,6 +15,7 @@ const CONFIG = {
     direction: DIRECTION.Right,
     speed: 10,
     snakeColor: "black",
+    fruitColor: "red"
 }
 
 class GameObject {
@@ -78,6 +79,11 @@ class Snake extends GameObject {
         this.bodySegments.unshift(newSegment);
     }
     
+    eat() {
+        fruit = new Fruit();
+        this.keepTail = true;
+    }
+
     draw() {
         context.fillStyle = CONFIG.snakeColor;
         for (let i = 0; i < this.bodySegments.length; i++) {
@@ -86,13 +92,32 @@ class Snake extends GameObject {
     }
 
 }
+
+class Fruit extends GameObject {
+    constructor() {
+        const x = getRandomCoordinate('x');
+        const y = getRandomCoordinate('y');
+        super(x, y);
     }
 
     draw() {
-        context.fillColor = CONFIG.color;
-        context.fillRect(this.bodySegments[0].x, this.bodySegments[0].y, GRID_SIZE, GRID_SIZE);
+        context.fillStyle = CONFIG.fruitColor;
+        context.fillRect(this.x, this.y, GRID_SIZE, GRID_SIZE);
     }
 }
+
+let getRandomCoordinate = (axis) => {
+    if (axis.toLowerCase() === 'x') {
+        const max = CANVAS_WIDTH / GRID_SIZE;
+        return (Math.floor(Math.random() * max)) * GRID_SIZE;
+        
+    } else if (axis.toLowerCase() === 'y') {
+        const max = CANVAS_HEIGHT / GRID_SIZE;
+        return (Math.floor(Math.random() * max)) * GRID_SIZE;
+    }
+
+    console.error("Please specify an axis ('x' or 'y')");
+};
 
 let drawGrid = () => {
     for (var x = 0; x <= CANVAS_WIDTH; x += GRID_SIZE) {
@@ -108,6 +133,8 @@ let drawGrid = () => {
     context.strokeStyle = "black";
     context.lineWidth = 1;
     context.stroke();
+};
+
 }
 
 let handleController = (event) => {
@@ -136,6 +163,8 @@ let gameLoop = () => {
 
     snake.moveHead();
     snake.draw();
+
+    fruit.draw();
     
     // Loop game at `CONFIG.speed` FPS
     setTimeout(function () {
@@ -146,6 +175,7 @@ let gameLoop = () => {
 
 /* Game Objects */
 let snake;
+let fruit;
 
 /* Intialize Game */
 if (typeof (canvas.getContext) !== undefined) {
@@ -153,6 +183,7 @@ if (typeof (canvas.getContext) !== undefined) {
     window.addEventListener('keydown', handleController, false);
 
     snake = new Snake(GRID_SIZE, GRID_SIZE);
+    fruit = new Fruit();
 
     gameLoop();
 
