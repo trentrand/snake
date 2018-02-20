@@ -17,10 +17,18 @@ const CONFIG = {
     color: "orange"
 }
 
-class SnakeSegment {
+class GameObject {
     constructor(x,y) {
         this.x = x;
         this.y = y;
+    }
+
+    collides(x, y) {
+        return this.x === x && this.y === y;
+    }
+
+    outOfBounds() {
+        return this.x < 0 || this.x > CANVAS_WIDTH || this.y < 0 || this.y > CANVAS_HEIGHT;
     }
 }
 
@@ -31,7 +39,7 @@ class Snake {
 
         // Setup body
         for(let i = 0; i < CONFIG.length; i++) {
-            const newSegment = new SnakeSegment(x, y);
+            const newSegment = new GameObject(x, y);
             this.bodySegments.push(newSegment);
         }
     }
