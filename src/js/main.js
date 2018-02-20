@@ -163,6 +163,17 @@ let drawGrid = () => {
     context.stroke();
 };
 
+let endGame = () => {
+    context.font = "64px Comic Sans MS";
+    context.fillStyle = "red";
+    context.textAlign = "center";
+    context.fillText("GAME OVER", CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2); 
+
+    const score = snake.bodySegments.length - CONFIG.length;
+    context.font = "32px Comic Sans MS";
+    context.fillStyle = "red";
+    context.textAlign = "center";
+    context.fillText(`Score: ${score}`, CANVAS_WIDTH / 2, (2 * CANVAS_HEIGHT / 3)); 
 }
 
 let handleController = (event) => {
@@ -187,6 +198,7 @@ let handleController = (event) => {
 
 let gameLoop = () => {
     if (gameOver) {
+        endGame();
         return;
     } 
     
